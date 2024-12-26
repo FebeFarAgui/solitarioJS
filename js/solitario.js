@@ -63,6 +63,8 @@ function comenzarJuego() {
 	el path correcto en la URL asociada al atributo src de <img>). Una vez creado
 	el elemento img, inclúyase como elemento del array mazoInicial. 
 	*/
+
+	mazoInicial = [];
 	
 	for (let palo of palos) {
 		for (let numero of numeros) {

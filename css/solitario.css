@@ -2,16 +2,12 @@
 	Especificaciones CSS para el juego del solitario 
 */
 
-/* /*** !!!!!!!!!!!!!!!!!!! CODIGO !!!!!!!!!!!!!!!!!!!! 
-	Completar los estilos que faltan y modificar al gusto del alumno
-**/
-
 .header {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px; /* Espacio entre el título y el logo */
-    margin-bottom: 20px; /* Espaciado hacia abajo */
+    gap: 10px;
+    margin-bottom: 20px;
 }
 
 img#logo {
@@ -20,13 +16,14 @@ img#logo {
 }
 
 .carta {
-    position: absolute; /* Posicionamiento absoluto de las cartas */
-    transition: all 0.3s; /* Suavizar los movimientos (opcional) */
+    position: absolute;
+    transition: all 0.3s;
 }
 
-/* Todos los contadores estarán ubicados en la parte inferior 
-   derecha (position absolute) de los respectivos tapetes (position relative).
-*/
+.central {
+	text-align: center;
+}
+
 .contador {
 	position: absolute;
 	bottom: 0px;

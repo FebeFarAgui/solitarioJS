@@ -6,6 +6,24 @@
 	Completar los estilos que faltan y modificar al gusto del alumno
 **/
 
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* Espacio entre el título y el logo */
+    margin-bottom: 20px; /* Espaciado hacia abajo */
+}
+
+img#logo {
+	height: auto;
+	width: 100px;
+}
+
+.carta {
+    position: absolute; /* Posicionamiento absoluto de las cartas */
+    transition: all 0.3s; /* Suavizar los movimientos (opcional) */
+}
+
 /* Todos los contadores estarán ubicados en la parte inferior 
    derecha (position absolute) de los respectivos tapetes (position relative).
 */

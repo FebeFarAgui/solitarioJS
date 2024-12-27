@@ -11,7 +11,7 @@ let numeros = [9, 10, 11, 12];
 let paso = 5;
 
 // Tapetes				
-let tapeteInicial   = document.getElementById("inicial");
+let tapeteInicial = document.getElementById("inicial");
 let tapeteSobrantes = document.getElementById("sobrantes");
 let tapeteReceptor1 = document.getElementById("receptor1");
 let tapeteReceptor2 = document.getElementById("receptor2");
@@ -19,7 +19,7 @@ let tapeteReceptor3 = document.getElementById("receptor3");
 let tapeteReceptor4 = document.getElementById("receptor4");
 
 // Mazos
-let mazoInicial   = [];
+let mazoInicial = [];
 let mazoSobrantes = [];
 let mazoReceptor1 = [];
 let mazoReceptor2 = [];
@@ -27,31 +27,33 @@ let mazoReceptor3 = [];
 let mazoReceptor4 = [];
 
 // Contadores de cartas
-let contInicial     = document.getElementById("contador_inicial");
-let contSobrantes   = document.getElementById("contador_sobrantes");
-let contReceptor1   = document.getElementById("contador_receptor1");
-let contReceptor2   = document.getElementById("contador_receptor2");
-let contReceptor3   = document.getElementById("contador_receptor3");
-let contReceptor4   = document.getElementById("contador_receptor4");
+let contInicial = document.getElementById("contador_inicial");
+let contSobrantes = document.getElementById("contador_sobrantes");
+let contReceptor1 = document.getElementById("contador_receptor1");
+let contReceptor2 = document.getElementById("contador_receptor2");
+let contReceptor3 = document.getElementById("contador_receptor3");
+let contReceptor4 = document.getElementById("contador_receptor4");
 let contMovimientos = document.getElementById("contador_movimientos");
 
 // Tiempo
-let contTiempo  = document.getElementById("contador_tiempo"); // span cuenta tiempo
-let segundos 	 = 0;    // cuenta de segundos
+let contTiempo = document.getElementById("contador_tiempo"); // span cuenta tiempo
+let segundos = 0;    // cuenta de segundos
 let temporizador = null; // manejador del temporizador
 
 /***** FIN DECLARACIÓN DE VARIABLES GLOBALES *****/
 
- 
+
 // Rutina asociada a boton reset
 document.addEventListener("DOMContentLoaded", () => {
-    // Asociar evento al botón reiniciar
-    document.getElementById("reset").addEventListener("click", () => {
-        comenzarJuego();
-    });
+	// Asociar evento al botón reiniciar
+	document.getElementById("reset").addEventListener("click", () => {
+		comenzarJuego();
+	});
 
-    // Comenzar el juego automáticamente
-    comenzarJuego();
+	// Comenzar el juego automáticamente
+	comenzarJuego();
+	setListenersTapetes();
+
 });
 
 // Desarrollo del comienzo de juego
@@ -65,10 +67,16 @@ function comenzarJuego() {
 	*/
 
 	mazoInicial = [];
-	
+	mazoSobrantes = [];
+	mazoReceptor1 = [];
+	mazoReceptor2 = [];
+	mazoReceptor3 = [];
+	mazoReceptor4 = [];
+
 	for (let palo of palos) {
 		for (let numero of numeros) {
 			let carta = document.createElement("img");
+			carta.id = numero + palo;
 			carta.src = `imagenes/baraja/${numero}-${palo}.png`;
 			carta.alt = `${numero} de ${palo}`;
 			carta.className = "carta";
@@ -78,20 +86,23 @@ function comenzarJuego() {
 			mazoInicial.push(carta);
 		}
 	}
-	
+
 	// Barajar y dejar mazoInicial en tapete inicial
 	barajar(mazoInicial);
 	cargarTapeteInicial(mazoInicial);
 
 	// Puesta a cero de contadores de mazos
 	setContador(contInicial, mazoInicial.length);
-    setContador(contSobrantes, 0);
-    setContador(contReceptor1, 0);
-    setContador(contReceptor2, 0);
-    setContador(contReceptor3, 0);
-    setContador(contReceptor4, 0);
-    setContador(contMovimientos, 0);
-	
+	setContador(contSobrantes, 0);
+	setContador(contReceptor1, 0);
+	setContador(contReceptor2, 0);
+	setContador(contReceptor3, 0);
+	setContador(contReceptor4, 0);
+	setContador(contMovimientos, 0);
+
+	// Añadir listeners a las cartas y tapetes
+	setListenersCartas();
+
 	// Arrancar el conteo de tiempo
 	arrancarTiempo();
 
@@ -122,22 +133,22 @@ function comenzarJuego() {
 	a clearInterval en su caso.   
 */
 
-function arrancarTiempo(){
+function arrancarTiempo() {
 	if (temporizador) clearInterval(temporizador);
-    let hms = function (){
-			let seg = Math.trunc( segundos % 60 );
-			let min = Math.trunc( (segundos % 3600) / 60 );
-			let hor = Math.trunc( (segundos % 86400) / 3600 );
-			let tiempo = ( (hor<10)? "0"+hor : ""+hor ) 
-						+ ":" + ( (min<10)? "0"+min : ""+min )  
-						+ ":" + ( (seg<10)? "0"+seg : ""+seg );
-			setContador(contTiempo, tiempo);
-            segundos++;
-		}
+	let hms = function () {
+		let seg = Math.trunc(segundos % 60);
+		let min = Math.trunc((segundos % 3600) / 60);
+		let hor = Math.trunc((segundos % 86400) / 3600);
+		let tiempo = ((hor < 10) ? "0" + hor : "" + hor)
+			+ ":" + ((min < 10) ? "0" + min : "" + min)
+			+ ":" + ((seg < 10) ? "0" + seg : "" + seg);
+		setContador(contTiempo, tiempo);
+		segundos++;
+	}
 	segundos = 0;
-    hms(); // Primera visualización 00:00:00
+	hms(); // Primera visualización 00:00:00
 	temporizador = setInterval(hms, 1000);
-    	
+
 } // arrancarTiempo
 
 
@@ -149,47 +160,54 @@ function arrancarTiempo(){
 */
 function barajar(mazo) {
 	for (let i = mazo.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [mazo[i], mazo[j]] = [mazo[j], mazo[i]];
-    }	
+		const j = Math.floor(Math.random() * (i + 1));
+		[mazo[i], mazo[j]] = [mazo[j], mazo[i]];
+	}
 } // barajar
 
 
 
 /**
- 	En el elemento HTML que representa el tapete inicial (variable tapeteInicial)
+	  En el elemento HTML que representa el tapete inicial (variable tapeteInicial)
 	se deben añadir como hijos todos los elementos <img> del array mazo.
 	Antes de añadirlos, se deberían fijar propiedades como la anchura, la posición,
 	coordenadas top y left, algun atributo de tipo data-...
 	Al final se debe ajustar el contador de cartas a la cantidad oportuna
 */
 function cargarTapeteInicial(mazo) {
-	tapeteInicial.innerHTML = ""; // Limpiar tapete
-    mazo.forEach((carta, index) => {
-        carta.style.top = `${index * paso}px`;
-        carta.style.left = `${index * paso}px`;
-        carta.style.width = "60px"; // Ajustar tamaño según preferencia
+	limpiarCartas(tapeteInicial);
+	limpiarCartas(tapeteReceptor1);
+	limpiarCartas(tapeteReceptor2);
+	limpiarCartas(tapeteReceptor3);
+	limpiarCartas(tapeteReceptor4);
+	limpiarCartas(tapeteSobrantes);
+	mazo.forEach((carta, index) => {
+		carta.style.top = `${index * paso}px`;
+		carta.style.left = `${index * paso}px`;
+		carta.style.width = "60px"; // Ajustar tamaño según preferencia
 		carta.style.zIndex = index;
-        tapeteInicial.appendChild(carta);
-    });
+		tapeteInicial.appendChild(carta);
+	});
 
-    setContador(contInicial, mazo.length);
+	setContador(contInicial, mazo.length);
 } // cargarTapeteInicial
 
 
 /**
- 	Esta función debe incrementar el número correspondiente al contenido textual
-   	del elemento que actúa de contador
+	  Esta función debe incrementar el número correspondiente al contenido textual
+		  del elemento que actúa de contador
 */
-function incContador(contador){
-	/*** !!!!!!!!!!!!!!!!!!! CODIGO !!!!!!!!!!!!!!!!!!!! **/	
-} // incContador
+function incContador(contador) {
+	let currentCount = parseInt(contador.innerHTML) || 0;
+	contador.innerHTML = currentCount + 1;
+}
 
 /**
 	Idem que anterior, pero decrementando 
 */
-function decContador(contador){
-	/*** !!!!!!!!!!!!!!!!!!! CODIGO !!!!!!!!!!!!!!!!!!!! ***/	
+function decContador(contador) {
+	let currentCount = parseInt(contador.innerHTML) || 0;
+	contador.innerHTML = Math.max(0, currentCount - 1);
 } // decContador
 
 /**
@@ -199,3 +217,74 @@ function decContador(contador){
 function setContador(contador, valor) {
 	contador.textContent = valor;
 } // setContador
+
+function setListenersCartas() {
+	// Obtenemos todos los elementos de cartas y tapetes
+	let cartas = document.querySelectorAll('.carta'); // Asume que cada carta tiene la clase "carta"
+
+	// Funciones para las cartas (elementos <img>)
+	cartas.forEach(carta => {
+		carta.addEventListener('dragstart', function (event) {
+			if (carta.parentElement === tapeteInicial || carta.parentElement === tapeteSobrantes) {
+				// Guardamos la carta que se está arrastrando en el objeto "dataTransfer"
+				event.dataTransfer.setData('text/plain', carta.id); // Almacena el id de la carta
+				carta.style.opacity = '0.5'; // Reduce la opacidad para indicar que está siendo arrastrada
+			} else {
+				event.preventDefault();
+			}
+		});
+
+		carta.addEventListener('dragend', function (event) {
+			carta.style.opacity = '1'; // Vuelve a la opacidad normal cuando se termina el arrastre
+		});
+	});
+}
+
+function setListenersTapetes() {
+	let tapetes = document.querySelectorAll('.tapete'); // Asume que cada tapete tiene la clase "tapete"
+
+	// Funciones para los tapetes (elementos <div>)
+	tapetes.forEach(tapete => {
+		tapete.addEventListener('dragenter', function (event) {
+			if (tapete != tapeteInicial) {
+				event.preventDefault(); // Necesario para que el tapete acepte el drop
+				tapete.style.backgroundColor = 'lightyellow'; // Cambia el color para indicar que está activo
+			}
+		});
+
+		tapete.addEventListener('dragover', function (event) {
+			event.preventDefault(); // Necesario para permitir el "drop"
+		});
+
+		tapete.addEventListener('dragleave', function (event) {
+			tapete.style.backgroundColor = ''; // Vuelve al color original
+		});
+
+		tapete.addEventListener('drop', function (event) {
+			if (tapete != tapeteInicial) {
+				event.preventDefault(); // Evita el comportamiento predeterminado
+				tapete.style.backgroundColor = ''; // Vuelve al color original
+				const cartaId = event.dataTransfer.getData('text/plain'); // Obtiene el id de la carta
+				const carta = document.getElementById(cartaId); // Encuentra la carta correspondiente
+				decContador(carta.parentElement.querySelector(".contador"));
+
+				// Mueve la carta al tapete
+				carta.style.top = "0px";
+				carta.style.left = "0px";
+				carta.style.zIndex = tapete.children.length;
+				tapete.appendChild(carta); // La carta es añadida al tapete
+
+				incContador(contMovimientos);
+				incContador(tapete.querySelector(".contador"));
+			}
+		});
+	});
+}
+
+function limpiarCartas(tapete) {
+	Array.from(tapete.children).forEach(child => {
+		if (child.tagName === "IMG") {
+			tapete.removeChild(child);
+		}
+	});
+}

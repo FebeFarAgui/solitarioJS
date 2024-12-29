@@ -80,3 +80,36 @@ div.tapete#sobrantes{
 div.tapete.receptor{
 	background-color: lightgreen;
 }
+
+/* */
+
+#control-volumen {
+    display: flex;
+    align-items: center;
+    margin: 10px;
+}
+
+/* */
+
+#barra-volumen {
+    width: 150px;
+    margin-left: 10px;
+}
+
+/* Eliminar borde de botón al pausado de música */
+
+#play-pause {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer; 
+    outline: none; 
+    padding: 5px;
+    transition: transform 0.2s;
+}
+
+/* Ampliar el boton cuando se pasa por encima de él */
+
+#play-pause:hover {
+    transform: scale(1.2);
+}

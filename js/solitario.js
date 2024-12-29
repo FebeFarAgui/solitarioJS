@@ -45,6 +45,9 @@ let contTiempo = document.getElementById("contador_tiempo"); // span cuenta tiem
 let segundos = 0;    // cuenta de segundos
 let temporizador = null; // manejador del temporizador
 
+// Volumen
+let volumenActual = 0.5;
+
 /***** FIN DECLARACIÓN DE VARIABLES GLOBALES *****/
 
 
@@ -69,6 +72,48 @@ document.addEventListener("DOMContentLoaded", () => {
 	comenzarJuego();
 	setListenersTapetes();
 
+});
+
+// Configurar la barra de volumen
+const barraVolumen = document.getElementById("barra-volumen");
+barraVolumen.addEventListener("input", (event) => {
+    volumenActual = parseFloat(event.target.value);
+    ajustarVolumenGeneral(volumenActual);
+});
+
+const nivelVolumen = document.getElementById("nivel-volumen");
+barraVolumen.addEventListener("input", (event) => {
+    volumenActual = parseFloat(event.target.value);
+    ajustarVolumenGeneral(volumenActual);
+    nivelVolumen.textContent = Math.round(volumenActual * 100) + "%";
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const musica = document.getElementById("musica-fondo");
+    const playPauseBtn = document.getElementById("play-pause");
+    const barraVolumen = document.getElementById("barra-volumen");
+    const nivelVolumen = document.getElementById("nivel-volumen");
+
+    // Inicializar volumen
+    musica.volume = barraVolumen.value;
+
+    // Reproducir/pausar música
+    playPauseBtn.addEventListener("click", () => {
+        if (musica.paused) {
+            musica.play();
+            playPauseBtn.textContent = "⏸️"; // Cambia el icono a pausa
+        } else {
+            musica.pause();
+            playPauseBtn.textContent = "▶️"; // Cambia el icono a play
+        }
+    });
+
+    // Cambiar el volumen
+    barraVolumen.addEventListener("input", (event) => {
+        const volumen = event.target.value;
+        musica.volume = volumen;
+        nivelVolumen.textContent = `${Math.round(volumen * 100)}%`;
+    });
 });
 
 /**
@@ -299,6 +344,7 @@ function setListenersTapetes() {
 		tapete.style.backgroundColor = ''; // Restaura color original
 
 		if (puedeMoverCarta(carta, tapete)) {
+			reproducirSonido("pop");
 			moverCarta(carta, tapete);
 
 			if (mazos.inicial.length === 0 && mazos.sobrantes.length > 0) {
@@ -309,6 +355,8 @@ function setListenersTapetes() {
 				alert("¡Felicidades, has ganado el juego!");
 				clearInterval(temporizador);
 			}
+		} else {
+			reproducirSonido("error");
 		}
 	}
 
@@ -425,4 +473,22 @@ function recargarTapeteInicial() {
 		setContador(contadores.inicial, mazos.inicial.length);
 		setContador(contadores.sobrantes, 0);
 	}
+}
+
+/**
+ * Reproduce un sonido ante determinada acción
+ * @param {String} categoria - Nombre del sonido que se quiere reproducir
+ */
+function reproducirSonido(categoria) {
+    const sonido = new Audio(`sonidos/${categoria}.mp3`);
+	sonido.volume = volumenActual;
+    sonido.play();
+}
+
+/**
+ * Ajusta el volumen de los sonidos
+ * @param {Double} nuevoVolumen - Nivel de volumen [0..1] al que se quiere cambiar
+ */
+function ajustarVolumenGeneral(nuevoVolumen) {
+    volumenActual = nuevoVolumen;
 }

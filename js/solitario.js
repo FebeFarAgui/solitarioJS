@@ -97,6 +97,14 @@ document.addEventListener("DOMContentLoaded", () => {
     // Inicializar volumen
     musica.volume = barraVolumen.value;
 
+	musica.play().then(() => {
+        playPauseBtn.textContent = '⏸️'; // Mostrar el icono de pausa
+    }).catch(error => {
+        // Si la reproducción automática está bloqueada, muestra el estado inicial
+        playPauseBtn.textContent = '▶️';
+        console.log("La reproducción automática fue bloqueada por el navegador.");
+    });
+
     // Reproducir/pausar música
     playPauseBtn.addEventListener("click", () => {
         if (musica.paused) {
